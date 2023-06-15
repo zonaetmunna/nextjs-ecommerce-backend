@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const { ObjectId } = mongoose.Schema.Types;
+const bcrypt = require("bcrypt");
 
 const userSchema = mongoose.Schema(
   {
@@ -14,17 +16,17 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      validate: {
+      /* validate: {
         validator: (value) =>
           validator.isStrongPassword(value, {
             minLength: 8,
-            minLowercase: 1,
-            minUppercase: 1,
-            minNumbers: 1,
-            minSymbols: 1,
+            // minLowercase: 1,
+            // minUppercase: 1,
+            // minNumbers: 1,
+            // minSymbols: 1,
           }),
         message: "Password is not strong enough.",
-      },
+      }, */
     },
     role: {
       type: String,
@@ -40,14 +42,14 @@ const userSchema = mongoose.Schema(
     },
     lastName: {
       type: String,
-      required: [true, "Please provide a first name"],
+      required: [false, "Please provide a first name"],
       trim: true,
       minLength: [3, "Name must be at least 3 characters."],
       maxLength: [100, "Name is too large"],
     },
     phone: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
       validate: {
         validator: (value) => {
@@ -84,6 +86,19 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+userSchema.pre("save", async function (next) {
+  const user = this;
+  const hash = await bcrypt.hash(user.password, 10);
+  this.password = hash;
+  next();
+});
+
+userSchema.methods.isValidPassword = async function (password) {
+  const user = this;
+  const compare = await bcrypt.compare(password, user.password);
+  return compare;
+};
 
 const User = mongoose.model("User", userSchema);
 
