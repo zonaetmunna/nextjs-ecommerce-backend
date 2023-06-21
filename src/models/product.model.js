@@ -59,9 +59,58 @@ const ProductSchema = mongoose.Schema(
     },
     stock: {
       type: Number,
-      required: true,
+      required: false,
       min: [0, "Stock cannot be negative."],
     },
+    brand: {
+      type: String,
+      required: false,
+      lowercase: true,
+    },
+    color: [
+      {
+        type: String,
+        lowercase: true,
+      },
+    ],
+    size: [
+      {
+        type: String,
+        lowercase: true,
+      },
+    ],
+    rating: {
+      type: Number,
+      required: false,
+      min: [1, "Rating must be at least 1."],
+      max: [5, "Rating cannot exceed 5."],
+    },
+    reviews: {
+      type: [
+        {
+          name: {
+            type: String,
+            required: true,
+          },
+          rating: {
+            type: Number,
+            required: true,
+            min: [1, "Rating must be at least 1."],
+            max: [5, "Rating cannot exceed 5."],
+          },
+          comment: {
+            type: String,
+            required: true,
+          },
+          user: {
+            type: ObjectId,
+            ref: "User",
+            required: false,
+          },
+        },
+      ],
+    },
+
     createdAt: {
       type: Date,
       default: Date.now(),

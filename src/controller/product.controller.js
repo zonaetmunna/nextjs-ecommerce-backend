@@ -1,3 +1,4 @@
+const Product = require("../models/product.model");
 const {
   getProductsService,
   createProductService,
@@ -10,8 +11,19 @@ exports.getProducts = async (req, res, next) => {
   try {
     let queries = { ...req.query };
     console.log(queries);
-    //sort , page , limit -> exclude
-    const excludeFields = ["search", "sort", "page", "limit"];
+    //sort , page , limit, category, price, rating, brand, color, size -> exclude
+    const excludeFields = [
+      "search",
+      "sort",
+      "page",
+      "limit",
+      "category",
+      "price",
+      "rating",
+      "brand",
+      "color",
+      "size",
+    ];
     excludeFields.forEach((field) => delete queries[field]);
 
     //gt ,lt ,gte .lte
@@ -56,6 +68,26 @@ exports.getProducts = async (req, res, next) => {
     res
       .status(200)
       .json(responseGenerate(products, "Product gated successfully!", false));
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getProductsByCategory = async (req, res, next) => {
+  try {
+    const category = req.params.category;
+
+    const products = await Product.find({ category: category });
+
+    res
+      .status(200)
+      .json(
+        responseGenerate(
+          products,
+          "Products fetched successfully by category!",
+          false
+        )
+      );
   } catch (error) {
     next(error);
   }
