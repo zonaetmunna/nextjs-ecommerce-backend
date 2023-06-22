@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-const categorySchema = mongoose.Schema(
+const brandSchema = mongoose.Schema(
   {
     name: {
       type: String,
       trim: true,
-      required: [true, "Please provide a category name"],
+      required: [true, "Please provide a brand name"],
       unique: true,
     },
 
@@ -24,5 +24,5 @@ const categorySchema = mongoose.Schema(
   }
 );
 
-const Category = mongoose.model("Category", categorySchema);
-module.exports = Category;
+const Brand = mongoose.model("Brand", brandSchema);
+module.exports = Brand;
